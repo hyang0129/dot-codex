@@ -37,8 +37,9 @@ Choose the matching path:
 
 - The main Codex run is the orchestrator. Use sub-agents only for bounded tasks.
 - Run the workflow in a dedicated git worktree. Create or attach a feature-branch worktree before planning or implementation work, and treat that worktree as the execution root for the rest of the flow.
-- The orchestrator does not implement product changes. It may write workflow artifacts such as `ISSUE_<number>_PLAN.md`, `ISSUE_<number>_ADR.md`, PR summaries, and review/rebase status outputs, but it must not edit production code, tests, or product documentation.
-- Keep the critical path local when the next action immediately depends on it.
+- The orchestrator does not implement product changes. All product changes, including small fixes, test edits, product documentation edits, and review-fix code changes, must be delegated to sub-agents.
+- The orchestrator may inspect code, write workflow artifacts such as `ISSUE_<number>_PLAN.md`, `ISSUE_<number>_ADR.md`, PR descriptions and summaries, issue comments, and review/rebase status outputs, run git and worktree operations, review diffs, and run verification.
+- Local orchestration does not permit local implementation. When the next blocking step is on the critical path, keep only orchestration, review, verification, and git or GitHub coordination local.
 - Treat `review-fix` and `rebase` as continuations of the main workflow whenever it is safe to continue inline.
 - Stop for human input only when repo identity is ambiguous, the working tree is dirty, ADR approval is required, or a blocker is hit.
 - Do not promise completion without running the relevant verification steps.

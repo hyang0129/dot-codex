@@ -94,7 +94,9 @@ Workers must never broaden scope on their own.
 
 - Prefer `explorer` for read-only research and analysis.
 - Prefer `worker` for bounded code changes.
-- The orchestrator may write workflow artifacts, but it must not edit production code, tests, or product documentation.
+- The orchestrator may write workflow artifacts and GitHub-facing coordination text, but it must not edit repository product files.
+- Delegate all product changes, including small fixes, test edits, product documentation edits, and review-fix code changes, to workers.
+- The fact that a step is on the critical path does not authorize orchestrator-side implementation.
 - Do not spawn an agent for the very next blocking step if the orchestrator can do it directly.
 - Use `wait_agent` sparingly; do useful orchestration work while agents run.
 - If parallel tasks overlap in write scope, do not run them in parallel.

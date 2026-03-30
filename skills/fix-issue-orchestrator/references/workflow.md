@@ -131,10 +131,13 @@ Poll issue comments until one of these happens:
 
 Use the plan and approved ADR to assign sub-agents.
 
-The orchestrator does not implement product changes in this phase. Treat these as orchestrator-owned workflow artifacts only:
+The orchestrator does not implement product changes in this phase or in later inline phases. All repository-file edits other than workflow artifacts must be delegated to workers.
+
+Treat these as orchestrator-owned workflow artifacts only:
 - `ISSUE_<number>_PLAN.md`
 - `ISSUE_<number>_ADR.md`
 - PR body updates and implementation walkthroughs
+- issue comments and ADR decision summaries
 - review-fix summary outputs
 - rebase status outputs
 
@@ -143,7 +146,9 @@ The orchestrator must not edit:
 - test files
 - product documentation
 
-Those edits belong to implementation workers or to a fully local non-orchestrator flow where no implementation workers are spawned.
+Product documentation here means repository documentation such as `README`, changelog files, docs pages, and developer docs that ship with the repo. PR descriptions, issue comments, and workflow artifact files remain orchestrator-owned.
+
+Those repository-file edits belong to implementation workers or to a fully local non-orchestrator flow where no implementation workers are spawned.
 
 Tier 1:
 - spawn one Coder worker
@@ -178,7 +183,7 @@ Once implementation workers are spawned, keep the orchestrator in coordination m
 - prepare validation and integration steps
 - manage git and GitHub handoffs
 
-Do not use the orchestrator to edit product files during implementation.
+Do not use the orchestrator to edit repository product files during implementation, review-fix, or rebase follow-through.
 
 ## Validation and PR creation
 
