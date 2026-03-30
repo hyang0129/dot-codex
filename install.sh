@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Install dot-codex repo into ~/.codex
-# Creates symlinks so edits in either location stay in sync.
-
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-TARGET="$HOME/.codex"
+CODEX_TARGET="$HOME/.codex"
+HOME_PLUGINS="$HOME/plugins"
+HOME_AGENTS="$HOME/.agents/plugins"
 
-mkdir -p "$TARGET" "$TARGET/.agents/plugins"
+mkdir -p "$CODEX_TARGET" "$CODEX_TARGET/skills" "$CODEX_TARGET/automations" "$HOME_PLUGINS" "$HOME_AGENTS"
 
 backup_path() {
   local dst="$1"
@@ -29,11 +28,11 @@ link_path() {
 echo "Installing dot-codex from $SCRIPT_DIR"
 echo ""
 
-link_path "$SCRIPT_DIR/config.toml" "$TARGET/config.toml"
-link_path "$SCRIPT_DIR/skills" "$TARGET/skills"
-link_path "$SCRIPT_DIR/plugins" "$TARGET/plugins"
-link_path "$SCRIPT_DIR/automations" "$TARGET/automations"
-link_path "$SCRIPT_DIR/.agents/plugins/marketplace.json" "$TARGET/.agents/plugins/marketplace.json"
+link_path "$SCRIPT_DIR/config.toml" "$CODEX_TARGET/config.toml"
+link_path "$SCRIPT_DIR/skills" "$CODEX_TARGET/skills"
+link_path "$SCRIPT_DIR/automations" "$CODEX_TARGET/automations"
+link_path "$SCRIPT_DIR/plugins/issue-orchestrator" "$HOME_PLUGINS/issue-orchestrator"
+link_path "$SCRIPT_DIR/.agents/plugins/marketplace.json" "$HOME_AGENTS/marketplace.json"
 
 echo ""
-echo "Done. Runtime state (auth, sessions, sqlite, caches, sandbox dirs, etc.) is untouched."
+echo "Done. Codex settings live under ~/.codex, and local plugin discovery lives under ~/.agents and ~/plugins."
