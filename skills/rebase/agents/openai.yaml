@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rebase"
+  short_description: "Rebase a reviewed PR branch"
+  default_prompt: "Use  to rebase the current PR branch and verify merge readiness."

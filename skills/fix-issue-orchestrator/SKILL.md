@@ -30,8 +30,8 @@ Examples:
 
 Choose the matching path:
 - Full issue-to-PR flow: read [workflow.md](./references/workflow.md) and [agent-team-guide.md](./references/agent-team-guide.md) first.
-- Standalone review-fix flow: read [review-fix.md](./references/review-fix.md) and [pr-guide.md](./references/pr-guide.md).
-- Standalone rebase flow: read [rebase.md](./references/rebase.md) and [pr-guide.md](./references/pr-guide.md).
+- Standalone review-fix flow: prefer the dedicated `$review-fix` skill; if staying in this skill, read [review-fix.md](./references/review-fix.md) and [pr-guide.md](./references/pr-guide.md).
+- Standalone rebase flow: prefer the dedicated `$rebase` skill; if staying in this skill, read [rebase.md](./references/rebase.md) and [pr-guide.md](./references/pr-guide.md).
 
 ## Operating Rules
 

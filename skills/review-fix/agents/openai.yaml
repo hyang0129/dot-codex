@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Fix"
+  short_description: "Run a structured PR review-fix loop"
+  default_prompt: "Use $review-fix to run a structured review-fix loop on the current PR branch."
