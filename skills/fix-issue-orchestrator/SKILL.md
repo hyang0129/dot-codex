@@ -30,12 +30,14 @@ Examples:
 
 Choose the matching path:
 - Full issue-to-PR flow: read [workflow.md](./references/workflow.md) and [agent-team-guide.md](./references/agent-team-guide.md) first.
-- Standalone review-fix flow: prefer the dedicated `$review-fix` skill; if staying in this skill, read [review-fix.md](./references/review-fix.md) and [pr-guide.md](./references/pr-guide.md).
-- Standalone rebase flow: prefer the dedicated `$rebase` skill; if staying in this skill, read [rebase.md](./references/rebase.md) and [pr-guide.md](./references/pr-guide.md).
+- Standalone review-fix flow: use the dedicated `$review-fix` skill as the source of truth.
+- Standalone rebase flow: use the dedicated `$rebase` skill as the source of truth.
 
 ## Operating Rules
 
 - The main Codex run is the orchestrator. Use sub-agents only for bounded tasks.
+- Run the workflow in a dedicated git worktree. Create or attach a feature-branch worktree before planning or implementation work, and treat that worktree as the execution root for the rest of the flow.
+- The orchestrator does not implement product changes. It may write workflow artifacts such as `ISSUE_<number>_PLAN.md`, `ISSUE_<number>_ADR.md`, PR summaries, and review/rebase status outputs, but it must not edit production code, tests, or product documentation.
 - Keep the critical path local when the next action immediately depends on it.
 - Treat `review-fix` and `rebase` as continuations of the main workflow whenever it is safe to continue inline.
 - Stop for human input only when repo identity is ambiguous, the working tree is dirty, ADR approval is required, or a blocker is hit.
@@ -46,6 +48,7 @@ Choose the matching path:
 Before implementation work:
 - confirm `gh` is installed and authenticated
 - resolve the git root
+- create or select the dedicated git worktree that will own the issue branch
 - inspect branch and working tree state
 - confirm the target repo if the issue identifier is only a number
 - stop if the working tree is dirty, no repo can be found, or repo detection is ambiguous
@@ -65,6 +68,4 @@ For standalone flows, produce the artifacts and summary states described in the 
 
 - [workflow.md](./references/workflow.md): full issue-to-PR orchestration flow
 - [agent-team-guide.md](./references/agent-team-guide.md): tiering and sub-agent role mapping
-- [review-fix.md](./references/review-fix.md): structured PR review-fix loop
-- [rebase.md](./references/rebase.md): post-review-fix rebase and CI validation
 - [pr-guide.md](./references/pr-guide.md): PR review and push hygiene

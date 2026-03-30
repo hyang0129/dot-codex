@@ -15,6 +15,8 @@ Before doing anything else:
 - resolve the git root
 - verify the working tree is clean
 
+This workflow is worktree-based. Do not implement on the user's current checkout when the issue-to-PR flow starts from the main repo working tree.
+
 If `issue` is only a number:
 - detect the repo from git remotes or `gh repo view`
 - confirm the detected repo with the user before fetching the issue
@@ -25,12 +27,28 @@ Stop if:
 - the working tree is dirty
 - the repo guess is ambiguous and the user has not confirmed it
 
+## Worktree setup
+
+Before planning or implementation:
+- choose a dedicated worktree path for the issue branch
+- create the feature branch worktree from the repo root or attach to an existing issue worktree if one already exists for the same branch
+- switch the main run to use that worktree as its execution root
+
+Use the worktree for:
+- planner artifacts
+- ADR artifacts
+- implementation worker edits
+- validation
+- commit, push, review-fix, and rebase work
+
+Do not run the issue workflow from the user's primary checkout once the worktree has been created.
+
 ## Plan
 
 Run this as a single Codex-native orchestration flow:
 
 1. Fetch the issue and assign it if needed.
-2. Assess complexity and create the feature branch.
+2. Assess complexity, create the feature branch, and create the dedicated worktree.
 3. Spawn a Planner sub-agent first.
 4. If the plan surfaces open architecture questions, spawn an Architect and pause for ADR approval.
 5. After approval, spawn implementation sub-agents using Codex-native roles and model choices.
@@ -57,6 +75,7 @@ Inspect:
 - working tree state
 
 Create the feature branch as `fix/issue-<number>-<slug>`.
+Create a dedicated worktree for that branch before continuing.
 
 ## Tiering
 
@@ -87,6 +106,7 @@ After the Planner returns:
 - read the plan
 - post a pre-implementation check comment to the issue
 - decide whether architecture review is required
+- close or leave idle any planning-only agents before implementation begins
 
 ## Architect and ADR gate
 
@@ -110,6 +130,20 @@ Poll issue comments until one of these happens:
 ## Implementation phase
 
 Use the plan and approved ADR to assign sub-agents.
+
+The orchestrator does not implement product changes in this phase. Treat these as orchestrator-owned workflow artifacts only:
+- `ISSUE_<number>_PLAN.md`
+- `ISSUE_<number>_ADR.md`
+- PR body updates and implementation walkthroughs
+- review-fix summary outputs
+- rebase status outputs
+
+The orchestrator must not edit:
+- production code
+- test files
+- product documentation
+
+Those edits belong to implementation workers or to a fully local non-orchestrator flow where no implementation workers are spawned.
 
 Tier 1:
 - spawn one Coder worker
@@ -138,6 +172,14 @@ Every worker task spec must include:
 - acceptance criteria
 - required outputs
 
+Once implementation workers are spawned, keep the orchestrator in coordination mode:
+- inspect files and diffs
+- run read-only discovery commands
+- prepare validation and integration steps
+- manage git and GitHub handoffs
+
+Do not use the orchestrator to edit product files during implementation.
+
 ## Validation and PR creation
 
 Run project-appropriate checks in this order:
@@ -163,7 +205,7 @@ Update the PR body with a human-readable implementation walkthrough before movin
 
 Do not stop after creating the PR if there are no blockers.
 
-Continue in the same flow using [review-fix.md](./review-fix.md):
+Continue by invoking the standalone `$review-fix` skill as the source of truth for this phase:
 - run the initial review
 - partition findings
 - spawn Fixer workers where needed
@@ -174,7 +216,7 @@ Only stop here if review-fix encounters a blocker that requires human interventi
 
 ## Inline rebase continuation
 
-If the review-fix phase completes without blockers, continue in the same flow using [rebase.md](./rebase.md):
+If the review-fix phase completes without blockers, continue by invoking the standalone `$rebase` skill as the source of truth for this phase:
 - capture pre-rebase CI
 - remove artifact files
 - rebase
@@ -192,6 +234,6 @@ Before finishing, confirm:
 - the issue was fetched from the correct repo
 - the branch exists and was pushed
 - the PR was created
-- the review-fix summary comment was posted if review-fix ran
-- the rebase phase either reached `READY` or reported a clear `BLOCKER`
+- the standalone `$review-fix` flow completed and posted its summary comment if review-fix ran
+- the standalone `$rebase` flow either reached `READY` or reported a clear `BLOCKER`
 - any ADR pause or blocker state was made explicit to the user

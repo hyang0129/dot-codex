@@ -1,0 +1,4 @@
+interface:
+  display_name: "Merge Queue"
+  short_description: "Process approved PRs in merge order"
+  default_prompt: "Use $merge-queue to process approved pull requests in the current repository."

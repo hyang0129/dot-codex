@@ -9,11 +9,13 @@ The main run is the orchestrator. Do not treat "agent teams" as a separate featu
 - `wait_agent`
 - `send_input`
 
+Run the issue workflow from a dedicated git worktree. The orchestrator and all implementation workers should operate against that worktree, not the user's primary checkout.
+
 ## Codex role mapping
 
 | Workflow role | Codex shape | Model | Notes |
 |---|---|---|---|
-| Orchestrator | main run | inherited | owns branching, git, and handoffs |
+| Orchestrator | main run | inherited | owns workflow artifacts, branching, git, validation, and handoffs; does not implement product changes |
 | Planner | `explorer` | `gpt-5.4` | read-only research plus plan file |
 | Architect | `explorer` | `gpt-5.4` | read-only research plus ADR file |
 | Reviewer | `explorer` | `gpt-5.4` | read-only findings |
@@ -92,6 +94,7 @@ Workers must never broaden scope on their own.
 
 - Prefer `explorer` for read-only research and analysis.
 - Prefer `worker` for bounded code changes.
+- The orchestrator may write workflow artifacts, but it must not edit production code, tests, or product documentation.
 - Do not spawn an agent for the very next blocking step if the orchestrator can do it directly.
 - Use `wait_agent` sparingly; do useful orchestration work while agents run.
 - If parallel tasks overlap in write scope, do not run them in parallel.
