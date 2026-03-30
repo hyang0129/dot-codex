@@ -219,7 +219,24 @@ The PR body must include these sections, using `N/A` only when a section is trul
 - `History`
 - `Merge instructions`
 
-Populate the initial PR body with the implementation-stage information that is already known. Do not leave placeholder headings empty.
+Required content for each section:
+- `What changed`: summarize the bug or root cause, the scope boundary of the fix, and the user-visible or developer-visible outcome after the change
+- `Implementation walkthrough`: name the main files, functions, classes, methods, or modules changed and explain what each one now does
+- `How components interact`: explain the control flow or data flow across the touched components, including call order and important preconditions or postconditions; include a diagram when the interaction spans multiple layers or would otherwise be hard to follow in prose
+- `Default execution path`: describe the normal path before the fix, why the old behavior failed or drifted, and what the new steady-state path does instead
+- `Edge cases and error handling`: enumerate invalid inputs, fallback behavior, retries, missing config or tooling behavior, and intentionally unchanged paths
+- `Tier / approach`: explain the implementation approach chosen for the selected tier and why it fits the issue scope
+- `Acceptance criteria`: map each issue criterion to an explicit `[x]` or `[ ]` item with a short note
+- `Outstanding items`: list follow-ups, deferred work, or explicitly state that none remain
+- `Review summary`: summarize the current review state, major findings fixed, findings deferred, current risk level, and whether the PR is clean or what still remains
+- `History`: record implementation, review-fix, and rebase milestones in chronological order
+- `Merge instructions`: state the intended merge strategy and any remaining human actions needed before merge
+
+Style requirements for substantial PRs:
+- prefer reviewer-facing explanations anchored to specific functions, files, and execution paths over generic summaries
+- when the change fixes a behavioral bug, explicitly describe the old behavior, why it happened, and the new behavior
+
+Populate the initial PR body with the implementation-stage information that is already known. Do not leave placeholder headings empty, and prefer concrete implementation anchors such as named functions, key methods, file roles, and control-flow steps.
 
 ## Inline review-fix continuation
 

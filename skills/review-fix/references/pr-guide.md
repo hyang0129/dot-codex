@@ -26,3 +26,4 @@ Before pushing changes to a PR, cross-reference the review task list:
 - Respect draft PR status and do not push changes unless explicitly asked.
 - When review-fix changes the state of the PR, update the PR description as well as the summary comment.
 - Review comments should be legible to humans first: include findings fixed, outstanding risks, intent validation, and any decisions still needed.
+- In `Review summary`, always include cycles run, findings fixed, findings deferred, current risk level, intent validation result, and whether the PR is clean or what remains.

@@ -112,12 +112,18 @@ Compare final CI state to the pre-rebase baseline:
 If clean:
 - update the PR description so `Review summary`, `Outstanding items`, `History`, and `Merge instructions` reflect the post-rebase outcome, intent review result, and CI status
 - post a detailed merge-ready comment that includes the rebase result, intent validation result, CI comparison, and any pre-existing failures that remain
-- post a separate terminal comment whose content is exactly `READY`
+- post a separate short terminal comment with:
+  `READY` as the heading,
+  one line stating the terminal state,
+  and the next human action
 - report `READY`
 
 If blocked:
 - update the PR description with the blocker state and next required action when possible
 - post a blocker comment with the reason, impact, and next step
-- post a separate terminal comment whose content is exactly `BLOCKER`
+- post a separate short terminal comment with:
+  `BLOCKER` as the heading,
+  one line stating the terminal state,
+  and the next human action
 - include the PR URL
 - stop further automation

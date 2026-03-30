@@ -26,3 +26,5 @@ Before pushing changes to a PR, cross-reference the review task list:
 - Respect draft PR status and do not push changes unless explicitly asked.
 - Treat the PR description as a maintained reviewer document, not a one-time summary.
 - Keep these sections current as the PR evolves: `What changed`, `Implementation walkthrough`, `How components interact` when useful, `Default execution path`, `Edge cases and error handling`, `Tier / approach`, `Acceptance criteria`, `Outstanding items`, `Review summary`, `History`, and `Merge instructions`.
+- Prefer concrete references to files, functions, methods, call paths, and behavior transitions over generic prose.
+- When the PR fixes a bug, explain the before state, the failure mechanism, and the after state in reviewer-facing language.

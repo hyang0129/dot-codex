@@ -100,6 +100,7 @@ After all fix cycles:
 - spawn an Intent Validator explorer
 - write `INTENT_VALIDATION.md`
 - update the PR description so `Review summary`, `Outstanding items`, `Acceptance criteria`, `History`, and `Merge instructions` match the verified post-fix state
+- ensure `Review summary` includes: cycles run, findings fixed, findings deferred, current risk level, intent validation result, and whether the PR is clean or what remains
 - post a PR comment titled `Automated Review-Fix Summary` containing cycle count, findings fixed, outstanding findings, decisions made, full intent validation, a concise reviewer-facing readiness summary, and the sentinel `<!-- review-fix-summary -->`
 
 Finish in one of these states:

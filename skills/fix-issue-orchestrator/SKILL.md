@@ -60,7 +60,7 @@ For the full workflow, produce:
 - `ISSUE_<number>_PLAN.md`
 - `ISSUE_<number>_ADR.md` when architecture review is needed
 - PR creation with a structured PR description that is kept current through implementation, review-fix, and rebase
-- a PR body that includes these sections when applicable:
+- a PR body that includes these sections and their required reviewer-facing contents when applicable:
   `What changed`, `Implementation walkthrough`, `How components interact`, `Default execution path`, `Edge cases and error handling`, `Tier / approach`, `Acceptance criteria`, `Outstanding items`, `Review summary`, `History`, and `Merge instructions`
 - review-fix summary comment when review-fix runs
 - a detailed merge-ready or blocker comment plus a terminal READY or BLOCKER state after rebase
