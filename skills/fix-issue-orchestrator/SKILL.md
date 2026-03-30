@@ -59,9 +59,11 @@ Before implementation work:
 For the full workflow, produce:
 - `ISSUE_<number>_PLAN.md`
 - `ISSUE_<number>_ADR.md` when architecture review is needed
-- PR creation plus a human-readable implementation walkthrough
+- PR creation with a structured PR description that is kept current through implementation, review-fix, and rebase
+- a PR body that includes these sections when applicable:
+  `What changed`, `Implementation walkthrough`, `How components interact`, `Default execution path`, `Edge cases and error handling`, `Tier / approach`, `Acceptance criteria`, `Outstanding items`, `Review summary`, `History`, and `Merge instructions`
 - review-fix summary comment when review-fix runs
-- a final READY or BLOCKER state after rebase
+- a detailed merge-ready or blocker comment plus a terminal READY or BLOCKER state after rebase
 
 For standalone flows, produce the artifacts and summary states described in the reference file for that flow.
 

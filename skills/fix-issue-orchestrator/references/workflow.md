@@ -204,7 +204,22 @@ After checks pass:
 - push the feature branch
 - create the PR
 
-Update the PR body with a human-readable implementation walkthrough before moving on.
+Before moving on, update the PR body so it is a reviewer-facing deliverable rather than a loose summary.
+
+The PR body must include these sections, using `N/A` only when a section is truly not relevant:
+- `What changed`
+- `Implementation walkthrough`
+- `How components interact` when multiple components or layers are involved
+- `Default execution path`
+- `Edge cases and error handling`
+- `Tier / approach`
+- `Acceptance criteria`
+- `Outstanding items`
+- `Review summary`
+- `History`
+- `Merge instructions`
+
+Populate the initial PR body with the implementation-stage information that is already known. Do not leave placeholder headings empty.
 
 ## Inline review-fix continuation
 
@@ -216,6 +231,7 @@ Continue by invoking the standalone `$review-fix` skill as the source of truth f
 - spawn Fixer workers where needed
 - commit review-fix batches
 - produce the review-fix summary comment
+- refresh the PR description after review-fix so `Review summary`, `Outstanding items`, `History`, `Acceptance criteria`, and `Merge instructions` reflect the latest verified state
 
 Only stop here if review-fix encounters a blocker that requires human intervention.
 
@@ -229,7 +245,8 @@ If the review-fix phase completes without blockers, continue by invoking the sta
 - validate intent
 - push with `--force-with-lease`
 - wait for PR CI
-- post READY or BLOCKER
+- update the PR description with final intent, CI, history, and merge guidance
+- post the required rebase comments ending in READY or BLOCKER
 
 If the rebase phase reaches `BLOCKER`, stop and report it clearly.
 
@@ -239,6 +256,7 @@ Before finishing, confirm:
 - the issue was fetched from the correct repo
 - the branch exists and was pushed
 - the PR was created
+- the PR description includes the required reviewer-facing sections and reflects the final post-review-fix and post-rebase state
 - the standalone `$review-fix` flow completed and posted its summary comment if review-fix ran
 - the standalone `$rebase` flow either reached `READY` or reported a clear `BLOCKER`
 - any ADR pause or blocker state was made explicit to the user

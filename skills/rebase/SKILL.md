@@ -42,7 +42,10 @@ Produce these artifacts during the run:
 - `REBASE_INTENT_REVIEW.md`
 - `CONFLICT_RESOLUTION.md` when conflicts require a worker
 
-Also update the PR with either a merge-ready comment or a blocker comment.
+Also:
+- update the PR description with the final post-rebase state
+- post a detailed merge-ready comment or blocker comment
+- post a separate terminal `READY` or `BLOCKER` comment
 
 ## References
 

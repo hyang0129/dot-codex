@@ -24,3 +24,5 @@ Before pushing changes to a PR, cross-reference the review task list:
 - Keep fixes in separate commits so reviewers can follow what changed and why.
 - Re-read surrounding code after fixes to avoid introducing new problems.
 - Respect draft PR status and do not push changes unless explicitly asked.
+- When review-fix changes the state of the PR, update the PR description as well as the summary comment.
+- Review comments should be legible to humans first: include findings fixed, outstanding risks, intent validation, and any decisions still needed.

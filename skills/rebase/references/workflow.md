@@ -11,7 +11,7 @@ Use this flow after review-fix, or as a standalone post-review cleanup on an ope
 
 Run this post-review-fix rebase flow:
 
-1. Read the `review-fix-summary` PR comment.
+1. Read the review-fix summary PR comment.
 2. Capture pre-rebase CI state.
 3. Remove planning and review artifacts.
 4. Rebase onto the base branch.
@@ -30,7 +30,13 @@ Run this post-review-fix rebase flow:
 
 ## Review-fix precondition
 
-Locate the PR comment containing `<!-- review-fix-summary -->`.
+Require a review-fix summary comment unless the user explicitly chooses to continue without it.
+
+Identify that comment by either:
+- the hidden marker `<!-- review-fix-summary -->` when present
+- the visible heading `Automated Review-Fix Summary`
+
+Prefer the hidden marker when it exists, but do not fail to recognize a valid review-fix summary just because the exact marker string is absent.
 
 If the comment is missing:
 - warn the user
@@ -104,11 +110,14 @@ Compare final CI state to the pre-rebase baseline:
 ## Final state
 
 If clean:
-- update the PR description
-- post a merge-ready comment
+- update the PR description so `Review summary`, `Outstanding items`, `History`, and `Merge instructions` reflect the post-rebase outcome, intent review result, and CI status
+- post a detailed merge-ready comment that includes the rebase result, intent validation result, CI comparison, and any pre-existing failures that remain
+- post a separate terminal comment whose content is exactly `READY`
 - report `READY`
 
 If blocked:
-- post a blocker comment with the reason
+- update the PR description with the blocker state and next required action when possible
+- post a blocker comment with the reason, impact, and next step
+- post a separate terminal comment whose content is exactly `BLOCKER`
 - include the PR URL
 - stop further automation

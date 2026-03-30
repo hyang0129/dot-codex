@@ -55,6 +55,12 @@ Each finding should include:
 
 If this is the first review and the PR has no reviews yet, post the initial findings to the PR before fixes begin.
 
+When posting visible review artifacts, prefer a reviewer-facing format that clearly lists:
+- findings by severity
+- batches planned or executed
+- decisions still needed
+- what must happen before the PR is ready
+
 ## Fix planning and workers
 
 The orchestrator should read `REVIEW_FINDINGS_<cycle>.md` and build `FIX_PLAN_<cycle>.md`.
@@ -93,7 +99,8 @@ After all fix cycles:
 - spawn a final Reviewer explorer
 - spawn an Intent Validator explorer
 - write `INTENT_VALIDATION.md`
-- post a PR comment containing cycle count, findings fixed, outstanding findings, decisions made, full intent validation, and the sentinel `<!-- review-fix-summary -->`
+- update the PR description so `Review summary`, `Outstanding items`, `Acceptance criteria`, `History`, and `Merge instructions` match the verified post-fix state
+- post a PR comment titled `Automated Review-Fix Summary` containing cycle count, findings fixed, outstanding findings, decisions made, full intent validation, a concise reviewer-facing readiness summary, and the sentinel `<!-- review-fix-summary -->`
 
 Finish in one of these states:
 - `clean`

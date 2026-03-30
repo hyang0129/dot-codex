@@ -24,3 +24,5 @@ Before pushing changes to a PR, cross-reference the review task list:
 - Keep fixes in separate commits so reviewers can follow what changed and why.
 - Re-read surrounding code after fixes to avoid introducing new problems.
 - Respect draft PR status and do not push changes unless explicitly asked.
+- After rebasing, keep both the PR description and PR comments in sync so reviewers can see the full final state without digging through history.
+- Use two final comments when the run completes: one detailed merge-ready or blocker explanation, then one terminal status comment containing only `READY` or `BLOCKER`.

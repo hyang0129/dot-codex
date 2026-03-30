@@ -24,3 +24,5 @@ Before pushing changes to a PR, cross-reference the review task list:
 - Keep fixes in separate commits so reviewers can follow what changed and why.
 - Re-read surrounding code after fixes to avoid introducing new problems.
 - Respect draft PR status and do not push changes unless explicitly asked.
+- Treat the PR description as a maintained reviewer document, not a one-time summary.
+- Keep these sections current as the PR evolves: `What changed`, `Implementation walkthrough`, `How components interact` when useful, `Default execution path`, `Edge cases and error handling`, `Tier / approach`, `Acceptance criteria`, `Outstanding items`, `Review summary`, `History`, and `Merge instructions`.

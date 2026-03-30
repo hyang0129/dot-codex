@@ -44,7 +44,9 @@ Produce these artifacts during the run:
 - `FIX_RESULT_<finding-id>.md`
 - `INTENT_VALIDATION.md`
 
-Also post a PR comment containing the sentinel `<!-- review-fix-summary -->`.
+Also:
+- post a reviewer-facing PR summary comment containing the sentinel `<!-- review-fix-summary -->`
+- update the PR description so `Review summary`, `Outstanding items`, `Acceptance criteria`, `History`, and `Merge instructions` reflect the final review-fix state
 
 ## References
 
