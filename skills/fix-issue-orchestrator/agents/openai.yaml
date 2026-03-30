@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fix Issue Orchestrator"
+  short_description: "Run issue-to-PR orchestration"
+  default_prompt: "Use $fix-issue-orchestrator to implement a GitHub issue end-to-end in the current repo."
