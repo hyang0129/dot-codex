@@ -1,0 +1,29 @@
+﻿{
+  "name": "issue-orchestrator",
+  "version": "0.1.0",
+  "description": "GitHub issue-to-PR orchestration workflow for Codex.",
+  "author": {
+    "name": "Hong M",
+    "url": "https://github.com/hyang0129"
+  },
+  "homepage": "https://github.com/hyang0129/dot-codex",
+  "repository": "https://github.com/hyang0129/dot-codex",
+  "license": "MIT",
+  "keywords": ["github", "issues", "workflow", "review", "rebase"],
+  "interface": {
+    "displayName": "Issue Orchestrator",
+    "shortDescription": "Run issue-to-PR workflows from slash commands",
+    "longDescription": "Local Codex plugin that ports a Claude-style fix-issue workflow into Codex commands, including planning, ADR review, review-fix, and rebase handoff.",
+    "developerName": "Hong M",
+    "category": "Coding",
+    "capabilities": ["Interactive", "Write"],
+    "websiteURL": "https://github.com/hyang0129/dot-codex",
+    "privacyPolicyURL": "https://github.com/hyang0129/dot-codex",
+    "termsOfServiceURL": "https://github.com/hyang0129/dot-codex",
+    "defaultPrompt": [
+      "/fix-issue https://github.com/owner/repo/issues/123",
+      "/review-fix fix/issue-123-example",
+      "/merge-queue approved"
+    ]
+  }
+}

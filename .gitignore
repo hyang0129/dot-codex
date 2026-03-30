@@ -1,0 +1,33 @@
+# Runtime state (never version-control)
+.sandbox/
+.sandbox-bin/
+.sandbox-secrets/
+.tmp/
+cache/
+memories/
+sessions/
+sqlite/
+tmp/
+vendor_imports/
+
+# Local state / auth
+.codex-global-state.json
+.personality_migration
+auth.json
+cap_sid
+models_cache.json
+session_index.jsonl
+logs_*.sqlite
+logs_*.sqlite-shm
+logs_*.sqlite-wal
+state_*.sqlite
+state_*.sqlite-shm
+state_*.sqlite-wal
+
+# Backups created by install scripts
+*.bak
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
