@@ -41,7 +41,10 @@ Choose the matching path:
 - The orchestrator does not implement product changes. All product changes, including small fixes, test edits, product documentation edits, and review-fix code changes, must be delegated to sub-agents.
 - The orchestrator may inspect code, write workflow artifacts such as `ISSUE_<number>_PLAN.md`, `ISSUE_<number>_ADR.md`, PR descriptions and summaries, issue comments, and review/rebase status outputs, run git and worktree operations, review diffs, and run verification.
 - Local orchestration does not permit local implementation. When the next blocking step is on the critical path, keep only orchestration, review, verification, and git or GitHub coordination local.
+- For the full issue-to-PR workflow, `review-fix` and `rebase` are mandatory completion phases, not optional follow-ons.
 - Treat `review-fix` and `rebase` as continuations of the main workflow whenever it is safe to continue inline.
+- Do not stop after PR creation or initial validation. The run is incomplete until `review-fix` has produced its summary comment and `rebase` has finished in `READY` or `BLOCKER`.
+- Only skip `review-fix` or `rebase` when the user explicitly asks to stop before those phases.
 - The orchestrator owns final coherence. It is responsible for making sure the final branch, PR description, acceptance criteria mapping, review summary, and merge guidance tell one consistent reviewer-facing story across all worker outputs.
 - Stop for human input only when repo identity is ambiguous, the working tree is dirty, ADR approval is required, or a blocker is hit.
 - Do not promise completion without running the relevant verification steps.
@@ -68,8 +71,8 @@ For the full workflow, produce:
 - a PR body that includes these sections and their required reviewer-facing contents when applicable:
   `What changed`, `Implementation walkthrough`, `How components interact`, `Default execution path`, `Edge cases and error handling`, `Tier / approach`, `Acceptance criteria`, `Outstanding items`, `Review summary`, `History`, and `Merge instructions`
 - PR body sections that include concrete file, function, class, method, and execution-path references rather than generic summaries
-- review-fix summary comment when review-fix runs
-- a detailed merge-ready or blocker comment plus a terminal READY or BLOCKER state after rebase
+- review-fix summary comment as a required completion artifact unless the user explicitly stops before that phase
+- a detailed merge-ready or blocker comment plus a terminal READY or BLOCKER state after rebase as required completion artifacts unless the user explicitly stops before that phase
 
 Keep this reviewer-facing PR body shape active in the main prompt, not only in reference files:
 - `What changed`: root cause, scope boundary, and user-visible or developer-visible outcome
