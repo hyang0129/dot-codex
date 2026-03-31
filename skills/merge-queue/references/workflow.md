@@ -2,13 +2,15 @@
 
 ## Goal
 
-Process all open PRs in one repository that carry a queue label, usually `approved`. Merge PRs that are ready, rebase branches that are behind, and stop short of manual code repair or conflict resolution.
+Process all open PRs in one repository that carry a queue label, usually `approved`. Merge PRs that are demonstrably ready, rebase branches that are behind, and stop short of manual code repair or conflict resolution.
 
 Terminate when every labeled PR has been processed for this run as one of:
 - merged
 - rebased and merged
 - blocked and de-labeled
 - skipped because it is not ready yet
+
+Optimize for high recall of true merge blockers. Accept a moderate false-positive blocker rate when necessary to keep risky code out of the base branch.
 
 ## Input Handling
 
@@ -37,7 +39,7 @@ After approval to proceed, switch to the default base branch and update it from 
 List open PRs in the confirmed repository that:
 - have the requested label
 - target the default base branch
-- are sorted by PR number ascending
+- can be presented in a stable order for reporting
 
 If there are no matching PRs, report that no queued PRs were found and stop.
 
@@ -45,20 +47,23 @@ Before processing, present:
 - repository
 - label
 - base branch
-- ordered PR table
+- queue table in a stable display order
 - total count
+
+The displayed order is for operator readability only. Readiness and merge safety determine what can be merged. Do not treat PR number order as semantically important unless the user or repository policy explicitly requires it.
 
 ## Per-PR Loop
 
-For each queued PR in ascending order:
+Process queued PRs one at a time. Use a stable order for reporting and deterministic runs, but do not treat that order as semantically significant unless the user or repository policy says otherwise.
 
 1. Refresh branch context.
    - check out the PR head branch locally if the workflow is using local git
    - fetch the latest base branch because prior merges may have moved it
 
 2. Inspect checks and merge state.
-   - classify CI as passing, pending, or failing
+   - classify required CI as passing, pending, or failing
    - inspect merge readiness, especially whether the PR is `CLEAN`, `UNSTABLE`, `BEHIND`, or otherwise blocked
+   - inspect the review-fix and rebase summaries for unresolved major findings, risky test edits, or required human decisions
 
 3. Route by state.
 
@@ -68,14 +73,19 @@ Skip the PR and leave its label untouched when:
 - CI is still pending
 - CI is failing and the PR is otherwise up to date
 - mergeability is not ready for a reason that should simply be retried later
+- mergeability or required-check state is temporarily stale and should be retried after refresh
 
 Log the reason in the run summary.
 
 ### Merge Cases
 
-Merge immediately when the PR is ready and the checks policy allows it, typically for:
-- `CLEAN`
-- `UNSTABLE` if the repository policy still permits merge
+Merge immediately only when all of the following are true:
+- the PR is `CLEAN`
+- all required checks are currently passing
+- there are no unresolved critical or major findings in the review-fix summary
+- there are no risky test changes or human-decision items called out in the review-fix or rebase summaries
+
+Do not merge `UNSTABLE` PRs by default. Treat `UNSTABLE` as `skipped` unless the repository has an explicit human-approved policy that allows it for this queue run.
 
 Use squash merge and delete the branch when that is the repository norm. If merge succeeds:
 - remove the queue label
@@ -93,8 +103,20 @@ Invoke `$rebase` when the PR is behind the base branch or blocked by branch dive
 
 Use the PR head branch and the current default base branch as inputs. Wait for `$rebase` to finish before continuing.
 
+`$rebase` expects a review-fix summary comment on the PR before it proceeds. Look for either:
+- the hidden marker `<!-- review-fix-summary -->` when present
+- the visible heading `Automated Review-Fix Summary`
+
+The PR at [#311](https://github.com/hyang0129/video_agent_long/pull/311) is a good example of a comment that should be accepted by this rule because it contains the visible `Automated Review-Fix Summary` heading and the hidden marker.
+
+Do not treat the presence of a summary comment as proof that the PR is safe to merge. The summary must also indicate:
+- no unresolved critical or major findings
+- no risky test edits
+- no pending human decisions
+- a conservative current risk level compatible with merge
+
 Handle the result like this:
-- if `$rebase` ends in `READY`, attempt the squash merge, remove the label on success, write a merge report, and log `rebased and merged`
+- if `$rebase` ends in `READY`, re-check mergeability plus required CI, then attempt the squash merge only if the PR is `CLEAN` and all required checks are passing; remove the label on success, write a merge report, and log `rebased and merged`
 - if `$rebase` ends in `BLOCKER`, remove the queue label, assume the rebase flow already left enough context for a human, and log `BLOCKER - label removed`
 
 If the follow-up merge after a successful rebase fails, log the failure and leave the label in place.
@@ -127,3 +149,5 @@ At the end of the run:
 - Never edit code as part of the queue run.
 - Never remove the label from skipped PRs.
 - Always remove the label from blocker cases that require human intervention.
+- Never merge when required checks are failing, even if the failures appear to be pre-existing.
+- When unsure whether a PR is safe, classify it as skipped or blocked rather than merged.

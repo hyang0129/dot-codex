@@ -47,6 +47,12 @@ If the comment is present, inspect it for:
 - remaining critical or major findings
 - high intent risks
 - overall cleanliness
+- risky test changes
+- pending human decisions
+
+Treat any unresolved critical or major finding as `BLOCKER`.
+Treat any risky or weakly justified test change as `BLOCKER` unless a human explicitly approved it.
+Treat any pending human decision as `BLOCKER` for automated merge-queue purposes.
 
 ## CI baseline
 
@@ -88,7 +94,7 @@ After a clean rebase, spawn a senior review explorer to compare:
 Write `REBASE_INTENT_REVIEW.md`.
 
 If any high intent risk exists, stop with `BLOCKER`.
-If medium risks exist, present them to the user and wait for a decision before continuing.
+If medium risks exist, present them to the user and wait for a decision before continuing. For merge-queue use, unresolved medium risks should be treated conservatively and should not end in `READY`.
 
 ## Sanity checks and push
 
@@ -103,9 +109,11 @@ Push with `--force-with-lease`, then watch PR CI or poll until it completes.
 
 Compare final CI state to the pre-rebase baseline:
 - passing before and after: OK
-- failing before and after: note as pre-existing
+- failing before and after: `BLOCKER` for merge-queue use unless a human explicitly approved carrying that failure
 - passing before but failing after: `BLOCKER`
 - newly appeared and failing after push: `BLOCKER`
+
+To end in `READY`, all required checks must be passing after the rebase. Pre-existing failing required checks are not merge-safe by default.
 
 ## Final state
 
@@ -117,6 +125,12 @@ If clean:
   one line stating the terminal state,
   and the next human action
 - report `READY`
+
+Only use the `READY` terminal state when:
+- all required checks are passing
+- no unresolved critical or major findings remain
+- no risky test edits remain unresolved
+- no human decision is still required
 
 If blocked:
 - update the PR description with the blocker state and next required action when possible

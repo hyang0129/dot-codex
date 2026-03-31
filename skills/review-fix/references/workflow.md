@@ -20,6 +20,8 @@ Run this structured review loop:
 7. Run a final review and an Intent Validator.
 8. Post the review-fix summary to the PR.
 
+Bias toward high recall of merge blockers. If a finding might represent a real merge risk and the evidence is ambiguous, classify upward rather than downward.
+
 ## PR discovery
 
 - determine the branch from the current branch or the input
@@ -41,6 +43,7 @@ Have the Reviewer:
 - read the entire PR diff
 - read the PR title and body
 - find correctness, test, security, scope, and pattern-consistency issues
+- treat risky test changes as first-class review targets, not merely supporting edits
 - write `REVIEW_FINDINGS_<cycle>.md`
 
 Each finding should include:
@@ -52,6 +55,18 @@ Each finding should include:
 - whether a decision is required
 - whether the fix is parallelizable
 - conflicts with other findings
+
+Severity guidance:
+- use `critical` or `major` for anything that could plausibly let incorrect behavior merge, including suspicious test weakening
+- when unsure between `minor` and `major` for merge safety, choose `major`
+
+Treat these test-edit patterns as at least `major` unless there is strong evidence they are correct and intended:
+- deleted or weakened assertions
+- broader mocks or stubs that reduce behavioral coverage
+- snapshot updates without a clear behavior explanation
+- added skips, retries, or flake-suppressing logic
+- changes that rewrite tests to match current buggy behavior instead of intended behavior
+- removal of coverage around failure paths, permissions, edge cases, or data validation
 
 If this is the first review and the PR has no reviews yet, post the initial findings to the PR before fixes begin.
 
@@ -76,6 +91,12 @@ For each actionable batch:
 - give each Fixer exact file ownership
 - tell Fixers not to broaden scope
 
+Fixer guardrails for test changes:
+- do not weaken tests just to make CI pass
+- do not delete assertions, coverage, or failure-path checks unless the intended behavior changed and that change is explicitly justified
+- do not update snapshots mechanically; explain the product-behavior reason for each snapshot change
+- if the only apparent fix is to relax or rewrite a test oracle, stop and mark the finding as needing human review
+
 Each Fixer should write `FIX_RESULT_<finding-id>.md` including:
 - status
 - files changed
@@ -90,8 +111,11 @@ After each batch:
 - run relevant tests and checks
 - confirm impact traces exist for critical and major findings
 - ensure fixes did not conflict
+- inspect any changed tests for oracle weakening, reduced coverage, or unexplained expectation drift
 
 Commit only verified batch files. If a batch fails verification, do not commit it and report it as needing manual attention.
+
+Do not mark the PR `clean` if risky test edits remain unresolved, even if the test suite is green.
 
 ## Final review and output
 
