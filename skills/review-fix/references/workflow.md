@@ -85,6 +85,7 @@ Grouping rules:
 - keep dependent findings serial
 - isolate human-decision findings
 - prioritize critical before major before minor
+- when there are fewer than 5 actionable findings in the cycle, prefer serial execution unless independence is obvious and high-confidence
 
 For each actionable batch:
 - spawn one Fixer worker per finding or tightly related serial batch
@@ -116,6 +117,11 @@ After each batch:
 Commit only verified batch files. If a batch fails verification, do not commit it and report it as needing manual attention.
 
 Do not mark the PR `clean` if risky test edits remain unresolved, even if the test suite is green.
+
+Review-fix retry limits:
+- run at most 2 fix cycles by default unless the user requested more
+- if the same critical or major finding survives 2 fixer attempts without a materially different approach, stop and report it as a blocker rather than looping
+- if verification fails twice for the same batch, stop retrying that batch automatically and surface it for human review
 
 ## Final review and output
 

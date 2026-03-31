@@ -53,8 +53,9 @@ Run this as a single Codex-native orchestration flow:
 4. If the plan surfaces open architecture questions, spawn an Architect and pause for ADR approval.
 5. After approval, spawn implementation sub-agents using Codex-native roles and model choices.
 6. Validate, review, commit, push, and open the PR.
-7. Continue directly into the review-fix phase when there are no blockers.
-8. Continue directly into the rebase phase when review-fix finishes without blockers.
+7. Run a dedicated documentation pass that rewrites the PR body from the issue, plan, and final diff into a reviewer-facing narrative.
+8. Continue directly into the review-fix phase when there are no blockers.
+9. Continue directly into the rebase phase when review-fix finishes without blockers.
 
 Do not reduce the flow to "go run another command" when the workflow can continue inline.
 
@@ -196,6 +197,7 @@ Run project-appropriate checks in this order:
 If checks fail:
 - route the failure back to the responsible worker
 - retry with bounded scope
+- allow at most 1 worker retry per failing implementation batch before escalating the failure back to the orchestrator summary
 - do not commit broken code
 
 After checks pass:
@@ -205,6 +207,14 @@ After checks pass:
 - create the PR
 
 Before moving on, update the PR body so it is a reviewer-facing deliverable rather than a loose summary.
+
+Run a dedicated documentation pass before review-fix begins. The documentation pass may be performed by the orchestrator or by a bounded read-only explorer, but it must:
+- read the issue, plan, ADR if present, and final implementation diff
+- read surrounding code for the main changed functions, classes, methods, or modules
+- rewrite the PR body as a coherent reviewer document instead of only filling headings
+- prefer concrete behavioral explanation over diff narration
+- use Mermaid when multiple layers or non-obvious control flow interact
+- explicitly describe before and after execution for behavioral fixes
 
 The PR body must include these sections, using `N/A` only when a section is truly not relevant:
 - `What changed`
@@ -235,8 +245,14 @@ Required content for each section:
 Style requirements for substantial PRs:
 - prefer reviewer-facing explanations anchored to specific functions, files, and execution paths over generic summaries
 - when the change fixes a behavioral bug, explicitly describe the old behavior, why it happened, and the new behavior
+- name the main files and concrete code anchors in each narrative section whenever possible
+- treat `Default execution path` as required for pipeline, middleware, adapter, agent, CLI, or multi-step behavior changes
+- include intentionally unchanged paths or deferred follow-ups when they are likely reviewer questions
+- do not rely on placeholder prose such as "updated logic" or "improved handling" without naming what changed
 
 Populate the initial PR body with the implementation-stage information that is already known. Do not leave placeholder headings empty, and prefer concrete implementation anchors such as named functions, key methods, file roles, and control-flow steps.
+
+The orchestrator owns the final PR narrative quality even when implementation and test edits were delegated. Before continuing to review-fix, verify that the PR body reads as one coherent explanation instead of a stitched set of worker notes.
 
 ## Inline review-fix continuation
 
