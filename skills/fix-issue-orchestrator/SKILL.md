@@ -37,6 +37,7 @@ Choose the matching path:
 
 - The main Codex run is the orchestrator. Use sub-agents only for bounded tasks.
 - Run the workflow in a dedicated git worktree. Create or attach a feature-branch worktree before planning or implementation work, and treat that worktree as the execution root for the rest of the flow.
+- Before local setup, create or verify a cross-container GitHub claim for the issue so a second invocation can detect that work is already in progress.
 - The orchestrator does not implement product changes. All product changes, including small fixes, test edits, product documentation edits, and review-fix code changes, must be delegated to sub-agents.
 - The orchestrator may inspect code, write workflow artifacts such as `ISSUE_<number>_PLAN.md`, `ISSUE_<number>_ADR.md`, PR descriptions and summaries, issue comments, and review/rebase status outputs, run git and worktree operations, review diffs, and run verification.
 - Local orchestration does not permit local implementation. When the next blocking step is on the critical path, keep only orchestration, review, verification, and git or GitHub coordination local.
@@ -50,6 +51,7 @@ Choose the matching path:
 Before implementation work:
 - confirm `gh` is installed and authenticated
 - resolve the git root
+- inspect existing issue coordination signals on GitHub before claiming the issue locally
 - create or select the dedicated git worktree that will own the issue branch
 - inspect branch and working tree state
 - confirm the target repo if the issue identifier is only a number
@@ -60,6 +62,7 @@ Before implementation work:
 For the full workflow, produce:
 - `ISSUE_<number>_PLAN.md`
 - `ISSUE_<number>_ADR.md` when architecture review is needed
+- an issue claim comment lifecycle on GitHub using a stable sentinel such as `<!-- codex-fix-issue-claim -->`
 - PR creation with a structured PR description that is kept current through implementation, review-fix, and rebase
 - a dedicated post-PR documentation pass that rewrites the PR body from the final diff and issue context into a reviewer-facing narrative
 - a PR body that includes these sections and their required reviewer-facing contents when applicable:
@@ -82,6 +85,14 @@ Keep this reviewer-facing PR body shape active in the main prompt, not only in r
 - `Merge instructions`: intended merge strategy and remaining human actions, if any
 
 For standalone flows, produce the artifacts and summary states described in the reference file for that flow.
+
+Use a soft-lock coordination model for duplicate prevention across dev containers:
+- inspect the issue for a fresh active claim comment before starting work
+- treat an existing fresh claim or existing open implementation PR for the same issue as a stop-by-default condition
+- allow override only with explicit user direction
+- post a claim comment immediately after deciding to proceed
+- update the same claim comment at major milestones with status and heartbeat timestamps
+- close the claim comment when the run finishes, fails, or is intentionally abandoned
 
 ## References
 

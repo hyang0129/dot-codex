@@ -14,6 +14,7 @@ Before doing anything else:
 - confirm `gh` is installed and authenticated
 - resolve the git root
 - verify the working tree is clean
+- inspect the GitHub issue for duplicate-run coordination signals before any local setup
 
 This workflow is worktree-based. Do not implement on the user's current checkout when the issue-to-PR flow starts from the main repo working tree.
 
@@ -26,6 +27,36 @@ Stop if:
 - `gh` is unavailable
 - the working tree is dirty
 - the repo guess is ambiguous and the user has not confirmed it
+
+## Cross-container claim
+
+Before creating a branch or worktree, check whether the issue already appears to be in progress elsewhere.
+
+Inspect these GitHub signals:
+- a top-level issue comment containing a stable sentinel such as `<!-- codex-fix-issue-claim -->`
+- the timestamp and status on the latest claim comment
+- whether the claim looks active, stale, or closed
+- any open PR that already references the issue and appears to be an active implementation attempt
+- optional coordination labels such as `codex:in-progress` when the repo uses them
+
+Treat this as a soft lock, not a perfect distributed lock. It is meant to prevent human-gap duplicate invocations across dev containers, not simultaneous machine races.
+
+Default decision rules:
+- if there is a fresh active claim comment, stop and tell the user who started it and when
+- if there is an open implementation PR for the same issue and no explicit override, stop and surface that PR
+- if the latest claim is stale, report that it looks stale and reclaim it by posting a new active claim or updating the old one
+- only override an active claim when the user explicitly tells you to continue anyway
+
+The claim comment should include at least:
+- issue number
+- actor or runner identity when available
+- repo identity
+- start timestamp
+- current status such as `claimed`, `planning`, `implementing`, `review-fix`, `rebase`, `done`, `blocked`, or `abandoned`
+- branch name once known
+- PR number once known
+- a heartbeat timestamp
+- the sentinel `<!-- codex-fix-issue-claim -->`
 
 ## Worktree setup
 
@@ -70,6 +101,8 @@ If `issue` is only a number:
 
 Fetch the issue and assign it to `@me` if unassigned.
 
+Before creating the feature branch, create or refresh the active issue claim on GitHub so later invocations can see that this issue is already in progress.
+
 Inspect:
 - current branch
 - recent history
@@ -108,6 +141,7 @@ After the Planner returns:
 - post a pre-implementation check comment to the issue
 - decide whether architecture review is required
 - close or leave idle any planning-only agents before implementation begins
+- refresh the issue claim heartbeat and mark the run as `planning` or `ready-for-implementation`
 
 ## Architect and ADR gate
 
@@ -127,6 +161,8 @@ Pause implementation here. Do not spawn implementation workers until the user ha
 Poll issue comments until one of these happens:
 - `APPROVED`: read the selected options, update ADR status to `ACCEPTED`, and continue
 - `REJECT`: stop and report that implementation is paused
+
+While paused for ADR approval, keep the issue claim current enough that a second invocation can see this run is still active.
 
 ## Implementation phase
 
@@ -184,6 +220,8 @@ Once implementation workers are spawned, keep the orchestrator in coordination m
 - prepare validation and integration steps
 - manage git and GitHub handoffs
 
+Refresh the issue claim heartbeat at major phase changes and after any long pause so another container does not mistake this run for abandoned work.
+
 Do not use the orchestrator to edit repository product files during implementation, review-fix, or rebase follow-through.
 
 ## Validation and PR creation
@@ -205,6 +243,8 @@ After checks pass:
 - commit with `fix(#<number>): <summary>`
 - push the feature branch
 - create the PR
+
+After the PR is created, update the issue claim with the branch, PR number, and latest status so future invocations can stop early and redirect to the existing run.
 
 Before moving on, update the PR body so it is a reviewer-facing deliverable rather than a loose summary.
 
@@ -265,6 +305,7 @@ Continue by invoking the standalone `$review-fix` skill as the source of truth f
 - commit review-fix batches
 - produce the review-fix summary comment
 - refresh the PR description after review-fix so `Review summary`, `Outstanding items`, `History`, `Acceptance criteria`, and `Merge instructions` reflect the latest verified state
+- refresh the issue claim status to `review-fix`
 
 Only stop here if review-fix encounters a blocker that requires human intervention.
 
@@ -280,6 +321,7 @@ If the review-fix phase completes without blockers, continue by invoking the sta
 - wait for PR CI
 - update the PR description with final intent, CI, history, and merge guidance
 - post the required rebase comments ending in READY or BLOCKER
+- refresh the issue claim status to `rebase` and then to `done` or `blocked` when the phase completes
 
 If the rebase phase reaches `BLOCKER`, stop and report it clearly.
 
@@ -293,3 +335,4 @@ Before finishing, confirm:
 - the standalone `$review-fix` flow completed and posted its summary comment if review-fix ran
 - the standalone `$rebase` flow either reached `READY` or reported a clear `BLOCKER`
 - any ADR pause or blocker state was made explicit to the user
+- the issue claim comment was updated to its terminal state or clearly marked as abandoned when the run stopped early
