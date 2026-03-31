@@ -35,17 +35,19 @@ Before doing anything else:
 - Commit only verified fix batches.
 - Do not silently skip unresolved findings.
 - Finish in `clean` or `blockers remain`.
+- Write all generated artifacts under `.codex-artifacts/review-fix/<run-id>/` and do not place them at the repo root or alongside source files.
+- Never paste, attach, or mirror `REVIEW_FINDINGS`, `FIX_PLAN`, `FIX_RESULT`, `INTENT_VALIDATION`, or other skill-generated artifact markdown into the PR body or PR comments. Keep those artifacts local to the run and summarize only the key outcomes in PR-facing updates.
 
 ## Outputs
 
 Produce these artifacts during the run:
-- `REVIEW_FINDINGS_<cycle>.md`
-- `FIX_PLAN_<cycle>.md`
-- `FIX_RESULT_<finding-id>.md`
-- `INTENT_VALIDATION.md`
+- `.codex-artifacts/review-fix/<run-id>/REVIEW_FINDINGS_<cycle>.md`
+- `.codex-artifacts/review-fix/<run-id>/FIX_PLAN_<cycle>.md`
+- `.codex-artifacts/review-fix/<run-id>/FIX_RESULT_<finding-id>.md`
+- `.codex-artifacts/review-fix/<run-id>/INTENT_VALIDATION.md`
 
 Also:
-- post a reviewer-facing PR summary comment containing the sentinel `<!-- review-fix-summary -->`
+- post a reviewer-facing PR summary comment containing the sentinel `<!-- review-fix-summary -->`, but keep it concise rather than embedding artifact markdown
 - update the PR description so `Review summary`, `Outstanding items`, `Acceptance criteria`, `History`, and `Merge instructions` reflect the final review-fix state
 
 ## References

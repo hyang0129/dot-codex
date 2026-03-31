@@ -46,6 +46,7 @@ Choose the matching path:
 - Do not stop after PR creation or initial validation. The run is incomplete until `review-fix` has produced its summary comment and `rebase` has finished in `READY` or `BLOCKER`.
 - Only skip `review-fix` or `rebase` when the user explicitly asks to stop before those phases.
 - The orchestrator owns final coherence. It is responsible for making sure the final branch, PR description, acceptance criteria mapping, review summary, and merge guidance tell one consistent reviewer-facing story across all worker outputs.
+- Never paste, attach, or mirror skill-specific artifact markdown into the PR body, PR comments, or review comments. Keep artifacts as local run files under `.codex-artifacts/` and summarize their conclusions in PR-facing updates when needed.
 - Stop for human input only when repo identity is ambiguous, the working tree is dirty, ADR approval is required, or a blocker is hit.
 - Do not promise completion without running the relevant verification steps.
 
@@ -63,8 +64,8 @@ Before implementation work:
 ## Output Expectations
 
 For the full workflow, produce:
-- `ISSUE_<number>_PLAN.md`
-- `ISSUE_<number>_ADR.md` when architecture review is needed
+- `.codex-artifacts/fix-issue-orchestrator/<run-id>/ISSUE_<number>_PLAN.md`
+- `.codex-artifacts/fix-issue-orchestrator/<run-id>/ISSUE_<number>_ADR.md` when architecture review is needed
 - an issue claim comment lifecycle on GitHub using a stable sentinel such as `<!-- codex-fix-issue-claim -->`
 - PR creation with a structured PR description that is kept current through implementation, review-fix, and rebase
 - a dedicated post-PR documentation pass that rewrites the PR body from the final diff and issue context into a reviewer-facing narrative
@@ -73,6 +74,8 @@ For the full workflow, produce:
 - PR body sections that include concrete file, function, class, method, and execution-path references rather than generic summaries
 - review-fix summary comment as a required completion artifact unless the user explicitly stops before that phase
 - a detailed merge-ready or blocker comment plus a terminal READY or BLOCKER state after rebase as required completion artifacts unless the user explicitly stops before that phase
+
+Keep generated workflow artifacts out of the repo root and away from source files. Store them only under `.codex-artifacts/fix-issue-orchestrator/<run-id>/` so repository `.gitignore` rules can ignore them predictably.
 
 Keep this reviewer-facing PR body shape active in the main prompt, not only in reference files:
 - `What changed`: root cause, scope boundary, and user-visible or developer-visible outcome
@@ -87,7 +90,7 @@ Keep this reviewer-facing PR body shape active in the main prompt, not only in r
 - `History`: implementation, review-fix, and rebase milestones in chronological order
 - `Merge instructions`: intended merge strategy and remaining human actions, if any
 
-For standalone flows, produce the artifacts and summary states described in the reference file for that flow.
+For standalone flows, produce the artifacts and summary states described in the reference file for that flow, and do not copy artifact markdown into PR updates for those flows either.
 
 Use a soft-lock coordination model for duplicate prevention across dev containers:
 - inspect the issue for a fresh active claim comment before starting work

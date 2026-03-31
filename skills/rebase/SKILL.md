@@ -35,16 +35,18 @@ Before doing anything else:
 - Use a Conflict Resolver worker only for conflict markers.
 - Use a senior review explorer to validate post-rebase intent.
 - Finish in exactly `READY` or `BLOCKER`.
+- Write all generated artifacts under `.codex-artifacts/rebase/<run-id>/` and do not place them at the repo root or alongside source files.
+- Never paste, attach, or mirror `REBASE_INTENT_REVIEW`, `CONFLICT_RESOLUTION`, or other skill-generated artifact markdown into the PR body or PR comments. Keep those artifacts local to the run and summarize only the decision-relevant outcome in PR-facing updates.
 
 ## Outputs
 
 Produce these artifacts during the run:
-- `REBASE_INTENT_REVIEW.md`
-- `CONFLICT_RESOLUTION.md` when conflicts require a worker
+- `.codex-artifacts/rebase/<run-id>/REBASE_INTENT_REVIEW.md`
+- `.codex-artifacts/rebase/<run-id>/CONFLICT_RESOLUTION.md` when conflicts require a worker
 
 Also:
 - update the PR description with the final post-rebase state
-- post a detailed merge-ready comment or blocker comment
+- post a detailed merge-ready comment or blocker comment, but keep it as a concise summary rather than embedding artifact markdown
 - post a separate terminal `READY` or `BLOCKER` comment
 
 ## References
